@@ -69,7 +69,13 @@ class NodeTree():
         eulerian_tours = []
         for node in leaves:
             if node.node_id == self.root_node_id and len(node.current_path) == len(self.graph):
-                eulerian_tours.append(node.current_path)
+                tmp_node = node
+                tour = []
+                while tmp_node != None:
+                    tour.insert(0,tmp_node.node_id)
+                    tmp_node = tmp_node.parent
+                eulerian_tours.append(tour)
+                #eulerian_tours.append(node.current_path)
         return eulerian_tours
 
     def get_leaf_nodes(self,node):
