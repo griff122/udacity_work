@@ -1,6 +1,18 @@
 
-import time
-import copy
+"""
+This program is designed to find the eulerian tour of a supplied graph.
+
+A Eulerian tour is a path through a graph in which all edges are used, 
+    every node is touched, and the last node of the path is the same as
+    the starting node.
+
+The graph is a list of tuples representing the edges between nodes.
+Example: [(1,2), (2,3), (3,1)]
+    This represents a graph with three nodes and three edges.
+    An edge between node 1 and node 2, between node 2 and node 3, and
+       node 3 and node 1.
+"""
+
 
 ########################################
 # Functions that don't belong to a class
@@ -18,14 +30,6 @@ class NodeTree():
     def __init__(self,root_node_id,graph):
         self.root_node_id = root_node_id # Only supply the ID of the node, and let the class handle the rest
         self.graph = graph
-        self.root = None
-        self.setUp()
-        self.buildTree()
-
-    def setUp(self):
-        """ Function to setup the initial tree (root node) before populating """
-        #root_edges = self.find_node_edges(self.root_node_id)
-        #root_children = self.get_children_from_edges(self.root_node_id,root_edges)
         self.root = Node(self.root_node_id,parent_node=None,children_nodes=None,current_path=None)
 
     def get_children_from_edges(self,node_id,edges):
@@ -59,6 +63,23 @@ class NodeTree():
             self.rec_buildTree(node.children[-1],new_path)
         return
 
+    def get_eulerian_tours(self):
+        """ Function to get the paths which are eulerian tours """
+        leaves = self.get_leaf_nodes(self.root)
+        eulerian_tours = []
+        for node in leaves:
+            if node.node_id == self.root_node_id and len(node.current_path) == len(self.graph):
+                eulerian_tours.append(node.current_path)
+        return eulerian_tours
+
+    def get_leaf_nodes(self,node):
+        if len(node.children) == 0: # Leaf
+            return [node]
+        leaves = []
+        for child in node.children:
+            leaves.extend(self.get_leaf_nodes(child))
+        return leaves
+
     def printTree(self):
             print self.root.node_id
             level = 1
@@ -86,13 +107,21 @@ if __name__ == "__main__":
     input_1 = [(1,2),(2,3),(3,1)]
     print "Tree for graph:",input_1
     nodeTree = NodeTree(1,input_1)
+    nodeTree.buildTree()
     nodeTree.printTree()
+    print "\n Eulerian Tours:"
+    for tour in nodeTree.get_eulerian_tours():
+        print tour
 
     print "\n------------------------------------------\n"
     input_2 = [(0,1), (1,5), (1,7), (4,5), (4,8), (1,6), (3,7), (5,9), (2,4), (0,4), (2,5), (3,6), (8,9)]
     print "Tree for graph:",input_2
-    nodeTree = NodeTree(1,input_2)
-    nodeTree.printTree()
+    nodeTree = NodeTree(0,input_2)
+    nodeTree.buildTree()
+    #nodeTree.printTree()
+    print "\n Eulerian Tours:"
+    for tour in nodeTree.get_eulerian_tours():
+        print tour
 
 
 
